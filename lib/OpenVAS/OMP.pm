@@ -6,7 +6,7 @@
 #
 # $Id$
 #
-# Last modified: [ 2013-06-12 09:37:17 ]
+# Last modified: [ 2013-06-12 12:13:43 ]
 
 ## This is the OpenVAS::OMP package {{{
 package OpenVAS::OMP;
@@ -20,7 +20,7 @@ use XML::Simple qw( :strict );
 # }}}
 
 ### Global variables {{{
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 # }}}
 
 ### Constants definitions {{{
@@ -281,3 +281,87 @@ __END__
 
 OpenVAS::OMP - Pure-perl interface to the OpenVAS Management Protocol
 
+=head1 SYNOPSIS
+
+	use OpenVAS::OMP;
+
+	my $omp = OpenVAS::OMP->new(
+		host		=> 'localhost',
+		ssl_verify	=> 1,
+		username	=> 'ttester',
+		password	=> 'Th!s-Is,S3crEt',
+		port		=> 9390,
+	);
+
+	my $hashrefRequest	= $omp->commandHash( $hashref );
+	my $xmlRequest		= $omp->commandXML( '<get_info name="CVE-2010-1234" type="cve" details="1"/>', 1 );
+	my $version		= $omp->getVersion;
+
+=head1 DESCRIPTION
+
+This module is a simple pure perl interface to the OpenVAS Management Protocol (OMP). It provides
+and similar functionality as the OMP-CLI client (shipped with OpenVAS). 
+
+=head1 METHODS
+
+=over 4
+
+=item B<new>( I<configuration hash> )
+
+The class constructor. It accepts serveral configuration arguments (some of them which are optional). 
+
+=over 4
+
+=item B<host> 
+
+Optional argument. Defaults to 'I<localhost>'. This arguments tells the module the hostname of the server
+to connect to.
+
+=item B<port>
+
+Optional argument. Defaults to 'I<9390>'. Use this argument to provide the server port for the OMP server.
+
+=item B<username>
+
+Provide a username to authenticate to the OMP server. This argument is not needed for the B<getVersion()> call.
+
+=item B<password>
+
+Provide a password to authenticate to the OMP server. This argument is not needed for the B<getVersion()> call.
+
+=item B<ssl_verify>
+
+Optional argument. Defaults to 'I<1>' (true). Tell IO::Socket::SSL to verify the SSL certificate on the OMP
+server. If this argument is set to true and the server certificate is not valid, no connection will be 
+established. If set to 'I<0>' or 'I<undef>' the module will not perform any SSL certificate validation (which
+is not a good idea).
+
+=back
+
+=item B<getVersion>()
+
+Get the version string from the OMP server. This call doesn't require any user authentication, so username and
+password arguments are not required in the constructor call.
+
+=item B<commandXML>( I<XML string> [, I<request raw response> ] )
+
+Query the OMP server with the provided XML string. The resposne will be a hashref with the server response. If
+you prefer the raw XML output from the server, the optional I<request raw response> argument can be set.
+
+=item B<commandHash>( I<hashref> [, I<request raw response> ] )
+
+Query the OMP server with the provided hashref. The call will take the hashref and convert it to a XML string
+and will then query the OMP server. The resposne will be a hashref with the server response. If
+you prefer the raw XML output from the server, the optional I<request raw response> argument can be set.
+
+=back
+
+=head1 DEVELOPMENT
+
+The project and the latest code can be found on BitBucket: I<https://bitbucket.org/wneessen/openvas-omp/>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2013 by Winfried Neessen <wn@neessen.net>. Published under the terms of the Artistic License 2.0.
+
+=cut
